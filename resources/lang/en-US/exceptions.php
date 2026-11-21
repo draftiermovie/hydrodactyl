@@ -367,6 +367,8 @@ return [
             'invalid_project_namespace' => 'Invalid project namespace.',
             'no_downloadable_file' => 'No downloadable file is available for this version.',
             'missing_download_url' => 'The version file is missing a download URL.',
+            'pack_not_minecraft' => 'This modpack is for a different Minecraft version than your server is running.',
+            'pack_wrong_loader' => 'This modpack requires the :loader loader, but your server runs :serverLoader.',
         ],
     ],
     'remote' => [

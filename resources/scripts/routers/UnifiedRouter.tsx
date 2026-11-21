@@ -99,6 +99,8 @@ const UnifiedRouter = () => {
     // The plugin/mod installer is only relevant for Minecraft servers whose egg
     // advertises a mod or plugin loader (e.g. "mod/fabric", "plugin/paper").
     const showInstaller = eggFeatures.some((feature) => /^mod\//i.test(feature) || /^plugin\//i.test(feature));
+    // Modpacks need a mod loader specifically (Fabric/Forge/NeoForge/Quilt).
+    const showModpacks = eggFeatures.some((feature) => /^mod\//i.test(feature));
 
     // console.log('Current server state:', {
     //     id,
@@ -164,6 +166,7 @@ const UnifiedRouter = () => {
     const NavigationActivity = useRef(null);
     const NavigationShell = useRef(null);
     const NavigationInstaller = useRef(null);
+    const NavigationModpacks = useRef(null);
     const CustomNavigationOne = useRef<HTMLAnchorElement>(null);
     const CustomNavigationTwo = useRef<HTMLAnchorElement>(null);
     const CustomNavigationThree = useRef<HTMLAnchorElement>(null);
@@ -219,6 +222,19 @@ const UnifiedRouter = () => {
                                                   text: t('navigation.installer'),
                                                   tabName: 'installer',
                                                   ref: NavigationInstaller,
+                                                  end: false,
+                                                  permission: 'mod.download',
+                                              },
+                                          ]
+                                        : []),
+                                    ...(showModpacks
+                                        ? [
+                                              {
+                                                  to: `/server/${id}/modpacks`,
+                                                  icon: Store01Icon,
+                                                  text: t('navigation.modpacks'),
+                                                  tabName: 'modpacks',
+                                                  ref: NavigationModpacks,
                                                   end: false,
                                                   permission: 'mod.download',
                                               },
@@ -351,7 +367,7 @@ const UnifiedRouter = () => {
                           end: true,
                       },
                   ],
-        [isServerRoute, id, egg_name, showInstaller, softwareEnabled, t],
+        [isServerRoute, id, egg_name, showInstaller, showModpacks, softwareEnabled, t],
     );
     const bottomNavItems = customNavItems;
 

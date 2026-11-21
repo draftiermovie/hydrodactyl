@@ -1466,6 +1466,7 @@
         "files": "Files",
         "home": "Home",
         "installer": "Installer",
+        "modpacks": "Modpacks",
         "network": "Network",
         "networking": "Networking",
         "schedule": "Schedule",
@@ -1942,6 +1943,23 @@
             "version_type_beta": "Beta",
             "version_type_other": "Other",
             "version_type_release": "Release"
+        },
+        "modpack": {
+            "description": "Browse and install Minecraft modpacks straight from Modrinth. The pack archive is downloaded on the daemon and extracted into your server.",
+            "error_install": "Failed to install the modpack.",
+            "error_load_more": "Failed to load more modpacks.",
+            "error_search": "Failed to search for modpacks.",
+            "install": "Install",
+            "install_success": "Downloaded {{filename}}.",
+            "install_success_restart": "Modpack installed. Restart your server to apply it.",
+            "installed": "Installed",
+            "installing": "Installing",
+            "loading": "Loading…",
+            "loading_versions": "Loading versions…",
+            "no_versions": "No versions available. Try a different loader or game version.",
+            "reinstall": "Reinstall",
+            "search_placeholder": "Search modpacks…",
+            "title": "Modpacks"
         },
         "network": {
             "allocations_count": "{{count}} allocations",
@@ -2654,7 +2672,8 @@
             "settings": "Settings",
             "activity": "Activity",
             "software": "Software",
-            "installer": "Installer"
+            "installer": "Installer",
+            "modpacks": "Modpacks"
         }
     },
     "setup": {

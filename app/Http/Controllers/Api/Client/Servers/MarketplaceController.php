@@ -167,6 +167,87 @@ class MarketplaceController extends ClientApiController
     }
 
     /**
+     * Search modpacks (type=pack) — Modrinth only.
+     */
+    public function searchPacks(SearchMarketplaceRequest $request): JsonResponse
+    {
+        $sourceKey = $request->input('source') ?? 'modrinth';
+
+        $filters = [
+            'query' => $request->input('query'),
+            'loader' => $request->input('loader'),
+            'game_version' => $request->input('game_version'),
+            'limit' => (int) $request->input('limit', 20),
+            'offset' => (int) $request->input('offset', 0),
+        ];
+
+        return $this->guard(function () use ($sourceKey, $filters): JsonResponse {
+            $source = $this->sources->resolve((string) $sourceKey);
+            if (!$source->supports('pack')) {
+                return response()->json(['results' => [], 'sources' => []]);
+            }
+
+            $projects = $source->search('pack', $filters);
+
+            return response()->json([
+                'results' => collect($projects)->map(fn($p) => $p->toArray())->values()->all(),
+                'sources' => [['key' => $source->key(), 'label' => $source->label()]],
+            ]);
+        });
+    }
+
+    /**
+     * Get modpack versions (type=pack).
+     */
+    public function projectPacks(GetProjectRequest $request): JsonResponse
+    {
+        $sourceKey = $request->input('source') ?? 'modrinth';
+        $projectId = $request->input('project_id');
+
+        return $this->guard(function () use ($sourceKey, $projectId, $request): JsonResponse {
+            $source = $this->sources->resolve((string) $sourceKey);
+            if (!$source->supports('pack')) {
+                return response()->json(['versions' => []]);
+            }
+
+            $versions = $source->versions('pack', (string) $projectId, [
+                'loader' => $request->input('loader'),
+                'game_version' => $request->input('game_version'),
+            ]);
+
+            return response()->json([
+                'versions' => collect($versions)->map(fn($v) => $v->toArray())->values()->all(),
+            ]);
+        });
+    }
+
+    /**
+     * Resolve a modpack version download (type=pack).
+     */
+    public function resolvePack(ResolveInstallRequest $request): JsonResponse
+    {
+        $sourceKey = $request->input('source') ?? 'modrinth';
+        $projectId = $request->input('project_id');
+        $versionId = $request->input('version_id');
+
+        return $this->guard(function () use ($sourceKey, $projectId, $versionId): JsonResponse {
+            $source = $this->sources->resolve((string) $sourceKey);
+            if (!$source->supports('pack')) {
+                return response()->json(['error' => __('exceptions.client.marketplace.unsupported_content_type')], 422);
+            }
+
+            $download = $source->resolve('pack', (string) $projectId, (string) $versionId);
+
+            return response()->json([
+                'url' => $download['url'],
+                'filename' => $download['filename'],
+                'size' => $download['size'],
+                'directory' => $this->destinations->directory('pack'),
+            ]);
+        });
+    }
+
+    /**
      * List installed projects
      */
     public function installed(ListInstallsRequest $request): JsonResponse

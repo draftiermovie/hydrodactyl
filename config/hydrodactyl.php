@@ -75,10 +75,11 @@ return [
 
         // Destination folder written for each content type. Mods always land in
         // the loader's "mods" directory (Fabric/Forge/NeoForge/Quilt); plugins
-        // land in "plugins".
+        // land in "plugins"; modpacks land in a "modpacks" folder.
         'destinations' => [
             'mod' => 'mods',
             'plugin' => 'plugins',
+            'pack' => 'modpacks',
         ],
     ],
 ];

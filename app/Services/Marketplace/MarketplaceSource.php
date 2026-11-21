@@ -5,8 +5,8 @@ namespace Pterodactyl\Services\Marketplace;
 /**
  * Contract implemented by each marketplace adapter (Modrinth, Hangar, ...).
  *
- * The installer works in two content types — "mod" and "plugin" — and each
- * adapter declares which types it can serve. The flow is:
+ * The installer works in three content types — "mod", "plugin", and "pack"
+ * (modpack) — and each adapter declares which types it can serve. The flow is:
  *
  *   1. search()     — browse projects by query + filters
  *   2. versions()   — list downloadable versions for a project
@@ -20,7 +20,11 @@ interface MarketplaceSource
     /** Human readable name for badges / selectors. */
     public function label(): string;
 
-    /** Whether this source can serve the given content type ("mod"|"plugin"). */
+    /**
+     * Whether this source can serve the given content type ("mod"|"plugin"|"pack").
+     *
+     * Only Modrinth serves "pack" (modpacks); Hangar and Spiget return false.
+     */
     public function supports(string $type): bool;
 
     /**

@@ -158,3 +158,87 @@ export const getMarketplaceGameVersions = async (uuid: string): Promise<GameVers
 
     return (data as { game_versions?: GameVersions })?.game_versions ?? {};
 };
+
+/**
+ * Search modpacks (type=pack) from Modrinth.
+ */
+export const searchMarketplacePacks = async (
+    uuid: string,
+    params: {
+        source?: string | null;
+        query?: string;
+        loader?: string | null;
+        game_version?: string | null;
+        limit?: number;
+        offset?: number;
+    },
+): Promise<{ results: MarketplaceProject[]; sources: MarketplaceSourceMeta[] }> => {
+    const { data } = await http.get(`/api/client/servers/${uuid}/marketplace/packs/search`, {
+        params: cleanParams({
+            type: 'pack',
+            source: params.source,
+            query: params.query,
+            loader: params.loader,
+            game_version: params.game_version,
+            limit: params.limit ?? 20,
+            offset: params.offset ?? 0,
+        }),
+    });
+
+    return {
+        results: (data?.results as MarketplaceProject[] | undefined) ?? [],
+        sources: (data?.sources as MarketplaceSourceMeta[] | undefined) ?? [],
+    };
+};
+
+/**
+ * Get modpack versions (type=pack).
+ */
+export const getMarketplacePackVersions = async (
+    uuid: string,
+    {
+        source,
+        projectId,
+        loader,
+        gameVersion,
+    }: {
+        source: string;
+        projectId: string;
+        loader?: string | null;
+        gameVersion?: string | null;
+    },
+): Promise<MarketplaceVersion[]> => {
+    const { data } = await http.get(`/api/client/servers/${uuid}/marketplace/packs/project`, {
+        params: cleanParams({
+            type: 'pack',
+            source,
+            project_id: projectId,
+            loader,
+            game_version: gameVersion,
+        }),
+    });
+
+    return (data?.versions as MarketplaceVersion[] | undefined) ?? [];
+};
+
+/**
+ * Resolve a modpack version download (type=pack).
+ */
+export const resolveMarketplacePackInstall = async (
+    uuid: string,
+    {
+        source,
+        projectId,
+        versionId,
+    }: {
+        source: string;
+        projectId: string;
+        versionId: string;
+    },
+): Promise<MarketplaceResolvedInstall> => {
+    const { data } = await http.get(`/api/client/servers/${uuid}/marketplace/packs/resolve`, {
+        params: { type: 'pack', source, project_id: projectId, version_id: versionId },
+    });
+
+    return data as MarketplaceResolvedInstall;
+};

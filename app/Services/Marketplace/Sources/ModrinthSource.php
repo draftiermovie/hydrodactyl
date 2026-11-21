@@ -30,7 +30,7 @@ class ModrinthSource extends AbstractMarketplaceSource
 
     public function supports(string $type): bool
     {
-        return $type === 'mod' || $type === 'plugin';
+        return $type === 'mod' || $type === 'plugin' || $type === 'pack';
     }
 
     /**
@@ -125,7 +125,11 @@ class ModrinthSource extends AbstractMarketplaceSource
 
     public function search(string $type, array $filters): array
     {
-        $facets = [['project_type:' . $type]];
+        // Modrinth's project_type values differ from our internal content-type
+        // keys: a "pack" (modpack) is "modpack" on Modrinth.
+        $projectType = $type === 'pack' ? 'modpack' : $type;
+
+        $facets = [['project_type:' . $projectType]];
 
         $loader = $this->normalizeLoader($filters['loader'] ?? null);
         if ($loader !== null && $loader !== '') {
@@ -175,7 +179,7 @@ class ModrinthSource extends AbstractMarketplaceSource
             // A bare /{slug} 404s, so include the project_type from the hit
             // (falling back to the queried type). Stale types 301-redirect to the
             // canonical one, so the link always lands on the right page.
-            $projectType = (string) (Arr::get($hit, 'project_type', $type) ?? $type);
+            $hitProjectType = (string) (Arr::get($hit, 'project_type', $projectType) ?? $projectType);
             $projects[] = new MarketplaceProject(
                 source: $this->key(),
                 id: $id,
@@ -186,7 +190,7 @@ class ModrinthSource extends AbstractMarketplaceSource
                 icon: $this->nullableString(Arr::get($hit, 'icon_url')),
                 downloads: (int) Arr::get($hit, 'downloads', 0),
                 categories: array_values(array_filter(array_map('strval', Arr::get($hit, 'categories', [])))),
-                url: $this->webUrl('/' . $projectType . '/' . $slug),
+                url: $this->webUrl('/' . $hitProjectType . '/' . $slug),
                 updatedAt: $this->nullableString(Arr::get($hit, 'date_modified')),
             );
         }

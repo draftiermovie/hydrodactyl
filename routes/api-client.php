@@ -124,6 +124,17 @@ Route::group([
 
         Route::get('/game-versions', [MarketplaceController::class, 'gameVersions'])
             ->name('api.client.servers.marketplace.game-versions');
+
+        // Modpack installer (Modrinth source). Browse + resolve are pack-scoped
+        // wrappers over the same provider plumbing. Installation currently
+        // downloads the pack archive into the modpacks/ staging folder; the
+        // extract-and-apply step (mrpack index + overrides) is a follow-up.
+        Route::get('/packs/search', [MarketplaceController::class, 'searchPacks'])
+            ->name('api.client.servers.marketplace.packs.search');
+        Route::get('/packs/project', [MarketplaceController::class, 'projectPacks'])
+            ->name('api.client.servers.marketplace.packs.project');
+        Route::get('/packs/resolve', [MarketplaceController::class, 'resolvePack'])
+            ->name('api.client.servers.marketplace.packs.resolve');
     });
 });
 

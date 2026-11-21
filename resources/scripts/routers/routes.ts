@@ -26,6 +26,7 @@ const ServerConsoleContainer = lazy(() => import('@/components/server/console/Se
 const DatabasesContainer = lazy(() => import('@/components/server/databases/DatabasesContainer'));
 const FileManagerContainer = lazy(() => import('@/components/server/files/FileManagerContainer'));
 const InstallerContainer = lazy(() => import('@/components/server/installer/InstallerContainer'));
+const ModpackInstallerContainer = lazy(() => import('@/components/server/installer/ModpackInstallerContainer'));
 const NetworkContainer = lazy(() => import('@/components/server/network/NetworkContainer'));
 const ServerActivityLogContainer = lazy(() => import('@/components/server/ServerActivityLogContainer'));
 const ScheduleContainer = lazy(() => import('@/components/server/schedules/ScheduleContainer'));
@@ -277,6 +278,18 @@ const routes: Routes = {
             // Only show for Minecraft servers whose egg advertises a mod or
             // plugin loader (e.g. "mod/fabric", "plugin/paper").
             eggFeature: /(?:^|\s)(?:mod|plugin)\/[a-z]+/i,
+        },
+        {
+            route: 'modpacks/*',
+            path: 'modpacks',
+            permission: 'mod.download',
+            name: 'server.nav.modpacks',
+            component: ModpackInstallerContainer,
+            icon: Box,
+            end: true,
+            // Modpacks need a Minecraft mod loader (Fabric/Forge/NeoForge/Quilt),
+            // so only surface the page on servers whose egg advertises mod/*.
+            eggFeature: /(?:^|\s)mod\/[a-z]+/i,
         },
     ],
 };
